@@ -96,7 +96,11 @@ void agregarSol(int cx, int cy)
 }
 
 // ------------------------------------------------------------
-// Nubes: union de circulos blancos (punto medio) + base plana
+// Nubes: SOLO circulos rellenos (punto medio), sin base plana,
+// para que la nube quede redondeada por todos lados.
+//
+//        fila de arriba:   ( )( O )(  O  )( )
+//        fila de abajo:       (  )(   )(  )
 // ------------------------------------------------------------
 struct Burbuja { int dx, dy, radio; };   // un circulo de la nube, relativo al centro
 
@@ -105,14 +109,14 @@ void agregarNube(int cx, int cy)
     const Color blanco = colorRGB(252, 252, 255);
 
     const std::vector<Burbuja> burbujas = {
-        { -14, 0, 6 }, { -5, 5, 9 }, { 7, 4, 10 }, { 17, 0, 6 }
+        // fila de arriba: los circulos grandes que dan la forma de "algodon"
+        { -14,  0,  6 }, { -5,  5,  9 }, {  7,  4, 10 }, { 17,  0,  6 },
+        // fila de abajo: cierran la nube por debajo con bordes redondos
+        {  -8, -3,  6 }, {  2, -4,  7 }, { 12, -3,  6 }
     };
 
     for (const Burbuja& b : burbujas)
         g_escena.agregarCirculo("Nube", cx + b.dx, cy + b.dy, b.radio, blanco, true);
-
-    // Base plana de la nube (rectangulo)
-    g_escena.agregarRectangulo("Nube - base", cx - 20, cy - 6, 43, 7, blanco);
 }
 
 } // namespace
@@ -128,7 +132,7 @@ void dibujarCielo()
 
     // Nubes: posicion de reposo (x, y). Estan elegidas para que, con su
     // vaiven, queden siempre dentro de la ventana y por encima de los edificios.
-    const Punto2D nubes[3] = { {46, 212}, {205, 214}, {276, 204} };
+    const Punto2D nubes[3] = { {46, 212}, {205, 214}, {276, 208} };
 
     for (int i = 0; i < 3; i++) {
         const Matriz3x3 M = traslacion(desplazamientoNube(i), 0);   // TRASLACION
